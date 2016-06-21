@@ -1,6 +1,6 @@
 var AWS = require('aws-sdk');
 var Gmail = require('node-gmail-api');
-// require('dotenv').config();
+require('dotenv').config();
 
 AWS.config.update({region: process.env.AWS_REGION});
 var sqs = new AWS.SQS();

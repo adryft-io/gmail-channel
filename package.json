@@ -6,6 +6,7 @@
   "scripts": {
     "publish:action": "./scripts/publish-action.js",
     "start:action": "node consumers/action.js",
+    "start": "node worker.js",
     "test": "mocha tests"
   },
   "keywords": [],
