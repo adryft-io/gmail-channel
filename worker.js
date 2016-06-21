@@ -11,7 +11,7 @@ var connectedUsers = [{id: 0}];
 // from auth service
 var getToken = function(userId) {
   var tokens = {
-    0: 'ya29.CjAIA0TOCILd7OCDMncygaJdDw0uBu7Ghewv_A_xrMsHYSg8dfuqpsGAz6VNQ2Wjkc0'
+    0: process.env.GMAIL_TEST_ACCESS_TOKEN
   };
   return tokens[userId];
 }
