@@ -24,42 +24,53 @@ var getConnectedUsers = function() {
 };
 
 var getToken = function(userId) {
-  return request({ uri: auth + '/token/' + userId, json: true });
+  return request({ uri: auth + '/token/' + userId, json: true })
+  .then(function(resp) {
+    return resp.accessToken;
+  })
+  .catch(function(err) {
+    console.log(err);
+  });
 };
 
 var getMessages = function(gmail) {
   return new Promise(function(resolve, reject) {
     var messages = [];
-    var lastCheckedAt = moment().subtract(15, 'minutes').format('x');
+
+    // TODO: last checked should eventually be tracked per user
+    var lastCheckedAt = moment().subtract(15, 'minutes').unix();
+
     gmail.messages('after:' + lastCheckedAt, {format: 'metadata'})
     .on('data', function (data) {
       messages.push(data);
     })
     .on('end', function() {
       console.log(messages);
-      resolve(messages)
+      resolve(messages);
     });
   });
 };
 
-var triggerProgagatedEvents = function(messages) {
-  var propagated = {};
-  messages.forEach(function(message) {
-    if(message.labelIds.includes('IMPORTANT') && typeof propagated['new-important'] === 'undefined') {
-      propagated['new-important'] = true;
-    }
-  });
+var triggerProgagatedEvents = function(userId) {
+  return function(messages) {
+    var propagated = {};
+    messages.forEach(function(message) {
+      if(message.labelIds.includes('IMPORTANT') && typeof propagated['new-important'] === 'undefined') {
+        propagated['new-important'] = true;
+      }
+    });
 
-  Object.keys(propagated).forEach(function(name) {
-    trigger(name, user.id);
-  });
+    Object.keys(propagated).forEach(function(triggerName) {
+      trigger(triggerName, userId);
+    });
+  }
 };
 
 var trigger = function(name, userId) {
   var body = JSON.stringify({ trigger_channel: 'gmail', trigger_name: name, user_id: userId });
   this.sendMessage({ MessageBody: body }, function (err, data) {
     if (err) return console.log(err);
-    console.log(data.MessageId);
+    console.log(name, userId, data.MessageId);
   });
 };
 
@@ -69,11 +80,11 @@ getQueue(new AWS.SQS(), 'triggers')
 
   getConnectedUsers().then(function(connectedUsers) {
     console.log(connectedUsers);
-    connectedUsers.forEach(function(user) {
-      getToken(user.id)
-      .then(function(token) { return new Gmail(token); })
+    connectedUsers.forEach(function(userId) {
+      getToken(userId)
+      .then(function(token) { console.log(token); return new Gmail(token); })
       .then(getMessages)
-      .then(triggerProgagatedEvents);
+      .then(triggerProgagatedEvents(userId));
     });
   });
 });
