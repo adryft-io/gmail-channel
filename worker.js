@@ -2,7 +2,7 @@ var AWS = require('aws-sdk');
 var Gmail = require('node-gmail-api');
 var request = require('request-promise');
 var moment = require('moment');
-require('dotenv').config();
+require('dotenv').config({ silent: true });
 
 AWS.config.update({region: process.env.AWS_REGION});
 var auth = process.env.AUTH_SERVICE_URL;
