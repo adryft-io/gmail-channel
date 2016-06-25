@@ -25,7 +25,7 @@ var getConnectedUsers = function() {
 };
 
 var getToken = function(userId) {
-  return request({ uri: auth + '/token/' + userId, json: true })
+  return request({ uri: auth + '/token/gmail/' + userId, json: true })
   .then(function(resp) {
     return resp.accessToken;
   })
