@@ -68,7 +68,7 @@ var triggerProgagatedEvents = function(userId) {
 };
 
 var trigger = function(name, userId) {
-  var body = JSON.stringify({ trigger_channel: 'gmail', trigger_name: name, user_id: userId });
+  var body = JSON.stringify({ action_channel: 'gmail', action_name: name, user_id: userId });
   this.sendMessage({ MessageBody: body }, function (err, data) {
     if (err) return console.log(err);
     console.log(name, userId, data.MessageId);

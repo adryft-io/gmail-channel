@@ -9,6 +9,7 @@ sqs.getQueueUrl({ QueueName: 'gmail-channel-actions' }, function(err, data) {
     queueUrl: data.QueueUrl,
     handleMessage: function (message, done) {
       var id = message.MessageId;
+      console.log(message, 'message');
       var body = JSON.parse(message.Body);
       console.log(id, body);
       done();
