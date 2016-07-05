@@ -52,7 +52,7 @@ var getMessages = function(gmail) {
   });
 };
 
-var triggerProgagatedEvents = function(userId) {
+var actionProgagatedEvents = function(userId) {
   return function(messages) {
     var propagated = {};
     messages.forEach(function(message) {
@@ -61,13 +61,13 @@ var triggerProgagatedEvents = function(userId) {
       }
     });
 
-    Object.keys(propagated).forEach(function(triggerName) {
-      trigger(triggerName, userId);
+    Object.keys(propagated).forEach(function(actionName) {
+      action(actionName, userId);
     });
   }
 };
 
-var trigger = function(name, userId) {
+var action = function(name, userId) {
   var body = JSON.stringify({ action_channel: 'gmail', action_name: name, user_id: userId });
   this.sendMessage({ MessageBody: body }, function (err, data) {
     if (err) return console.log(err);
@@ -75,9 +75,9 @@ var trigger = function(name, userId) {
   });
 };
 
-getQueue(new AWS.SQS(), 'trigger')
+getQueue(new AWS.SQS(), 'action')
 .then(function(queue) {
-  trigger = trigger.bind(queue);
+  action = action.bind(queue);
 
   getConnectedUsers().then(function(connectedUsers) {
     console.log(connectedUsers);
@@ -85,7 +85,7 @@ getQueue(new AWS.SQS(), 'trigger')
       getToken(userId)
       .then(function(token) { console.log(token); return new Gmail(token); })
       .then(getMessages)
-      .then(triggerProgagatedEvents(userId));
+      .then(actionProgagatedEvents(userId));
     });
   });
 });

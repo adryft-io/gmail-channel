@@ -12,7 +12,7 @@ sqs.createQueue({QueueName: 'gmail-channel-actions'}, function (err, data) {
   // Sending a message
   // The following example sends a message to the queue created in the previous example.
   var queue = new AWS.SQS({params: {QueueUrl: url}});
-  var body = JSON.stringify({ trigger: 'gmail:new-starred' });
+  var body = JSON.stringify({ action: 'gmail:new-starred' });
   queue.sendMessage({ MessageBody: body }, function (err, data) {
     if (err) return console.log(err);
     console.log(data.MessageId);
