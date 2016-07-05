@@ -61,8 +61,8 @@ var triggerProgagatedEvents = function(userId) {
       }
     });
 
-    Object.keys(propagated).forEach(function(triggerName) {
-      trigger(triggerName, userId);
+    Object.keys(propagated).forEach(function(actionName) {
+      trigger(actionName, userId);
     });
   }
 };
@@ -75,7 +75,7 @@ var trigger = function(name, userId) {
   });
 };
 
-getQueue(new AWS.SQS(), 'trigger')
+getQueue(new AWS.SQS(), 'action')
 .then(function(queue) {
   trigger = trigger.bind(queue);
 
