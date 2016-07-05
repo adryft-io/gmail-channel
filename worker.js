@@ -52,7 +52,7 @@ var getMessages = function(gmail) {
   });
 };
 
-var actionProgagatedEvents = function(userId) {
+var triggerProgagatedEvents = function(userId) {
   return function(messages) {
     var propagated = {};
     messages.forEach(function(message) {
@@ -62,12 +62,12 @@ var actionProgagatedEvents = function(userId) {
     });
 
     Object.keys(propagated).forEach(function(actionName) {
-      action(actionName, userId);
+      trigger(actionName, userId);
     });
   }
 };
 
-var action = function(name, userId) {
+var trigger = function(name, userId) {
   var body = JSON.stringify({ action_channel: 'gmail', action_name: name, user_id: userId });
   this.sendMessage({ MessageBody: body }, function (err, data) {
     if (err) return console.log(err);
@@ -85,7 +85,7 @@ getQueue(new AWS.SQS(), 'action')
       getToken(userId)
       .then(function(token) { console.log(token); return new Gmail(token); })
       .then(getMessages)
-      .then(actionProgagatedEvents(userId));
+      .then(triggerProgagatedEvents(userId));
     });
   });
 });
