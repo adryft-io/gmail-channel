@@ -77,7 +77,7 @@ var trigger = function(name, userId) {
 
 getQueue(new AWS.SQS(), 'action')
 .then(function(queue) {
-  action = action.bind(queue);
+  trigger = trigger.bind(queue);
 
   getConnectedUsers().then(function(connectedUsers) {
     console.log(connectedUsers);
